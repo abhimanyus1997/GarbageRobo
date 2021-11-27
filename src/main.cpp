@@ -1,42 +1,43 @@
 #include <Arduino.h>
+#include <BluetoothSerial.h>
 
-int in1 = 13;  // Motor A connections
-int in2 = 12;
-int in3 = 14;   // Motor B connections
-int in4 = 27;
+#define ledPIN 2
+BluetoothSerial SerialBT;
+byte BTData;
 
-void setup() {
-  // Set all the motor control pins to outputs
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
-  
-  // Turn off motors - Initial state
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
+/* Check if Bluetooth configurations are enabled in the SDK */
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+void setup()
+{
+  pinMode(ledPIN, OUTPUT);
+  Serial.begin(115200);
+  SerialBT.begin();
+  Serial.println("Bluetooth Started! Ready to pair...");
 }
 
-void loop() {
-    
-  // Now turn FWD motors
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+void loop()
+{
+  if(SerialBT.available())
+  {
+    BTData = SerialBT.read();
+    Serial.write(BTData);
+  }
 
-  delay(3000);
-
-  // Now turn BWD motors
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
-
-  delay(3000);
+  /* If received Character is 1, then turn ON the LED */
+  /* You can also compare the received data with decimal equivalent */
+  /* 48 for 0 and 49 for 1 */
+  /* if(BTData == 48) or if(BTData == 49) */
+  if(BTData == '1')
+  {
+    digitalWrite(ledPIN, HIGH);
+  }
   
-
+  /* If received Character is 0, then turn OFF the LED */
+  if(BTData == '0')
+  {
+    digitalWrite(ledPIN, LOW);
+  }
 }
-
