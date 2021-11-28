@@ -1,106 +1,51 @@
 #include <Arduino.h>
-#include <BluetoothSerial.h>
-
-#define ledPIN 2
-
-int in1 = 13; // Motor A connections
-int in2 = 12;
-int in3 = 14; // Motor B connections
-int in4 = 27;
-
-BluetoothSerial SerialBT;
-byte BTData;
-
-/* Check if Bluetooth configurations are enabled in the SDK */
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
+#include <Wire.h> //include Wire.h library
 
 void setup()
 {
-  pinMode(ledPIN, OUTPUT);
-  Serial.begin(9600);
-  SerialBT.begin();
-  //Serial.println("Bluetooth Started! Ready to pair...");
-
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
-  // Turn off motors - Initial state
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
+  Wire.begin(); // Wire communication begin
+  Serial.begin(115200); // The baudrate of Serial monitor is set in 9600
+  while (!Serial); // Waiting for Serial Monitor
+  Serial.println("\nI2C Scanner");
 }
 
 void loop()
 {
-  if (SerialBT.available())
-  {
-    BTData = SerialBT.read();
-    Serial.write(BTData);
-  }
-  char Data = (char)BTData;
+  byte error, address; //variable for error and I2C address
+  int nDevices;
 
-  if (Data == 'w')
-  {
-    // Now turn FWD motors
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH);
-  }
+  Serial.println("Scanning...");
 
-  else if (Data == 's')
+  nDevices = 0;
+  for (address = 1; address < 127; address++ )
   {
-    // Now turn FWD motors
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-  }
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
 
-  else if (Data == 'a')
-  {
-    // Now left motors
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH);
+    if (error == 0)
+    {
+      Serial.print("I2C device found at address 0x");
+      if (address < 16)
+        Serial.print("0");
+      Serial.print(address, HEX);
+      Serial.println("  !");
+      nDevices++;
+    }
+    else if (error == 4)
+    {
+      Serial.print("Unknown error at address 0x");
+      if (address < 16)
+        Serial.print("0");
+      Serial.println(address, HEX);
+    }
   }
-    else if (Data == 'A')
-  {
-    // Now left motors
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH);
-  }
-
-  else if (Data == 'd')
-  {
-    // Now right motors
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, LOW);
-  }
-  else if (Data == 'D')
-  {
-    // Now right motors
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-  }
-
+  if (nDevices == 0)
+    Serial.println("No I2C devices found\n");
   else
-  {
-    // Now stop motors
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, LOW);
-  }
+    Serial.println("done\n");
+
+  delay(5000); // wait 5 seconds for the next I2C scan
 }
