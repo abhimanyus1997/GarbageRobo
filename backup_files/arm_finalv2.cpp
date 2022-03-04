@@ -37,7 +37,7 @@
  */
 
 #include <ESP32Servo.h>
-#include <Wire.h>        // Only needed for Arduino 1.6.5 and earlier
+#include <Wire.h> // Only needed for Arduino 1.6.5 and earlier
 #include <MFRC522.h>
 
 // create four servo objects
@@ -50,7 +50,7 @@ Servo servo5;
 int minUs = 500;
 int maxUs = 3500;
 
-int grabForce = 60;
+int grabForce = 50;
 
 // These are all GPIO pins on the ESP32
 // Recommended pins include 2,4,12-19,21-23,25-27,32-33
@@ -62,6 +62,17 @@ int servo5Pin = 32; // gripper
 
 int pos = 0; // position in degrees
 ESP32PWM pwm;
+
+void zero()
+{
+  // BASE
+  servo2.write(0); // j1 - 26
+  servo3.write(0); // j2 - 32
+  servo4.write(0); // wrist - 33
+  servo5.write(0); // grabber - 33
+  delay(1000);
+  servo1.write(0); // base - 25
+}
 
 void left()
 {
@@ -75,11 +86,11 @@ void left()
 
   delay(5000);
 
-  servo1.write(180);
+  servo1.write(90);
   delay(2000);
 
   // arm down to lift
-  for (pos = 0; pos <= 65; pos += 1)
+  for (pos = 0; pos <= 48; pos += 1)
   { // move motor slowly
     servo2.write(pos);
     servo3.write(0);
@@ -91,7 +102,7 @@ void left()
 
   // arm move up
 
-  for (pos = 60; pos >= 0; pos -= 1)
+  for (pos = 48; pos >= 20; pos -= 1)
   { // move motor slowly
     servo2.write(pos);
     servo3.write(0);
@@ -101,7 +112,7 @@ void left()
   delay(2000);
 
   // base move over tank
-  servo1.write(90);
+  servo1.write(180);
   delay(2000);
 
   servo4.write(120); // unload kachra
@@ -109,11 +120,11 @@ void left()
   servo4.write(0); // normal dustbin orientation
   delay(2000);
 
-  servo1.write(180);
+  servo1.write(90);
   delay(2000);
 
   // arm down
-  for (pos = 0; pos <= 65; pos += 1)
+  for (pos = 0; pos <= 60; pos += 1)
   { // move motor slowly
     servo2.write(pos);
     servo3.write(0);
@@ -232,7 +243,7 @@ void loop()
   servo4.attach(servo4Pin, minUs, maxUs);
   servo5.attach(servo5Pin, minUs, maxUs);
 
-  left();
-  delay(5000);
-  right();
+  //zero();
+  // BASE
+   left();
 }

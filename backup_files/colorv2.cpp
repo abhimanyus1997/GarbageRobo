@@ -98,6 +98,8 @@ void loop()
   // Delay to stabilize sensor
   delay(250);
 
+  Serial.println("R:"+(String)redPW+", G:"+(String)greenPW+", B:"+(String)bluePW);
+/* 
   if ((redPW >= 91 && redPW <= 115) && (greenPW >= 170 && greenPW <= 215) && (bluePW >= 125 && bluePW <= 145))
   {
     pinkcount++;
@@ -136,5 +138,5 @@ void loop()
   {
     Serial.println("\n***ORANGE Detected***");
     orangecount = 0;
-  }
+  } */
 }

@@ -38,6 +38,7 @@
 
 #include <ESP32Servo.h>
 #include <Wire.h>        // Only needed for Arduino 1.6.5 and earlier
+//  #include "SSD1306Wire.h" // legacy: #include "SSD1306.h"
 #include <MFRC522.h>
 
 // create four servo objects
