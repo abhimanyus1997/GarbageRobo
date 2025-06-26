@@ -1,0 +1,20 @@
+torch
+torchvision
+pandas
+dvc
+mlflow
+notebook
+numpy
+matplotlib
+seaborn
+python-box
+pyYAML
+tqdm
+ensure
+joblib
+types-PyYAML
+scipy
+fastapi
+uvicorn
+gdown
+-e .
