@@ -25,7 +25,10 @@ dependencies = [
     "scipy",
     "fastapi",
     "uvicorn",
-    "gdown"
+    "gdown",
+    "aiohttp>=3.12.13",
+    "asyncio>=3.4.3",
+    "python-dotenv>=1.1.1",
 ]
 
 [project.optional-dependencies]

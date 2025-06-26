@@ -224,6 +224,15 @@ wheels = [
 ]
 
 [[package]]
+name = "asyncio"
+version = "3.4.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/54/054bafaf2c0fb8473d423743e191fcdf49b2c1fd5e9af3524efbe097bafd/asyncio-3.4.3.tar.gz", hash = "sha256:83360ff8bc97980e4ff25c964c7bd3923d333d177aa4f7fb736b019f26c7cb41", size = 204411 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/22/74/07679c5b9f98a7cb0fc147b1ef1cc1853bc07a4eb9cb5731e24732c5f773/asyncio-3.4.3-py3-none-any.whl", hash = "sha256:c4d18b22701821de07bd6aea8b53d21449ec0ec5680645e5317062ea21817d2d", size = 101767 },
+]
+
+[[package]]
 name = "asyncssh"
 version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2815,6 +2824,15 @@ wheels = [
 ]
 
 [[package]]
+name = "python-dotenv"
+version = "1.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f6/b0/4bc07ccd3572a2f9df7e6782f52b0c6c90dcbb803ac4a167702d7d0dfe1e/python_dotenv-1.1.1.tar.gz", hash = "sha256:a8a6399716257f45be6a007360200409fce5cda2661e3dec71d23dc15f6189ab", size = 41978 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5f/ed/539768cf28c661b5b068d66d96a2f155c4971a5d55684a514c1a0e0dec2f/python_dotenv-1.1.1-py3-none-any.whl", hash = "sha256:31f23644fe2602f88ff55e1f5c79ba497e01224ee7737937930c448e4d0e24dc", size = 20556 },
+]
+
+[[package]]
 name = "python-json-logger"
 version = "3.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3659,6 +3677,8 @@ name = "waste-classifier"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "aiohttp" },
+    { name = "asyncio" },
     { name = "colorama" },
     { name = "dvc" },
     { name = "ensure" },
@@ -3671,6 +3691,7 @@ dependencies = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "python-box" },
+    { name = "python-dotenv" },
     { name = "pyyaml" },
     { name = "scipy" },
     { name = "seaborn" },
@@ -3683,6 +3704,8 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aiohttp", specifier = ">=3.12.13" },
+    { name = "asyncio", specifier = ">=3.4.3" },
     { name = "colorama", specifier = ">=0.4.6" },
     { name = "dvc" },
     { name = "ensure" },
@@ -3695,6 +3718,7 @@ requires-dist = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "python-box" },
+    { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "pyyaml" },
     { name = "scipy" },
     { name = "seaborn" },
