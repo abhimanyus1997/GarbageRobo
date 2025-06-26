@@ -8,36 +8,27 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Define a custom formatter to add color based on log level
+
+
 class ColoredFormatter(logging.Formatter):
-    """
-    A custom logging formatter that adds color to log messages
-    based on their logging level using Colorama.
-    """
     COLORS = {
         logging.DEBUG: Fore.CYAN,
         logging.INFO: Fore.GREEN,
         logging.WARNING: Fore.YELLOW,
-        logging.ERROR: Fore.RED,
-        logging.CRITICAL: Fore.RED + Style.BRIGHT
+        logging.ERROR: Fore.RED + Style.BRIGHT,
+        logging.CRITICAL: Fore.MAGENTA + Style.BRIGHT
     }
 
     def format(self, record):
-        """
-        Formats the log record, applying color to the message.
-        """
-        # Get the color corresponding to the log level, default to no color
         color = self.COLORS.get(record.levelno, "")
-
-        # Format the message using the base logging string
         message = super().format(record)
-
-        # Apply the color and then reset it
         return color + message + Style.RESET_ALL
 
 
 # Define the logging string format for all messages
 # Changed %(module)s to %(name)s for better logger name display
-logging_str = "[%(asctime)s: %(levelname)s: %(name)s: %(message)s]"
+logging_str = "[%(asctime)s] | %(levelname)-8s | %(name)s | Line: %(lineno)d | %(message)s"
+
 
 # Define the directory where logs will be stored
 log_dir = "logs"
@@ -69,6 +60,12 @@ logging.basicConfig(
         stream_handler   # Add the colored stream handler
     ]
 )
+
+# This line explicitly creates a logger instance named "wasteClassifierLogger"
+# and assigns it to the 'logger' variable within this __init__.py file.
+# This makes 'logger' available for direct import from the 'waste_classifier' package.
+logger = logging.getLogger("wasteClassifierLogger")
+
 
 # After basicConfig, any module within the 'waste_classifier' package (or anywhere in your app)
 # can get its own logger instance by calling logging.getLogger(__name__).

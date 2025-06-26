@@ -1,5 +1,7 @@
+from src.waste_classifier import logger
+
 def main():
-    print("Hello from waste-classifier!")
+    logger.info("Hello from waste-classifier!")
 
 
 if __name__ == "__main__":
