@@ -17,4 +17,5 @@ scipy
 fastapi
 uvicorn
 gdown
+lightning
 -e .

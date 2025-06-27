@@ -29,6 +29,7 @@ dependencies = [
     "aiohttp>=3.12.13",
     "asyncio>=3.4.3",
     "python-dotenv>=1.1.1",
+    "lightning>=2.5.2",
 ]
 
 [project.optional-dependencies]
