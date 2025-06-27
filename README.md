@@ -46,22 +46,58 @@ The repository is structured for clarity and maintainability, supporting the ful
 
 ```
 .
-├── .github/         # CI/CD workflows
-├── config/          # Configuration files
-├── research/        # Notebooks for EDA and prototyping
-├── src/             # Core ML pipeline code
-│   ├── components/  # Modular pipeline components
-│   ├── pipelines/   # Workflow orchestration
-│   ├── utils/       # Utilities and logging
-├── templates/       # API/frontend templates
-├── dvc.yaml         # DVC pipeline definition
-├── main.py          # FastAPI app entry point
-├── params.yaml      # Pipeline/model parameters
-├── pyproject.toml   # Project metadata and dependencies
-├── requirements.txt # Pip dependencies
-├── setup.py         # Packaging config
-└── uv.lock          # Dependency lock file
+├── .github/             # CI/CD workflow configurations (e.g., GitHub Actions)
+├── config/              # YAML configuration files (global settings, parameters)
+│   ├── config.yaml      # Main configuration file for pipelines
+│   └── secrets.yaml     # (Optional) Secure secrets/configuration
+├── research/            # Jupyter notebooks for EDA, experimentation, and prototyping
+├── src/                 # Core source code for the ML pipeline
+│   ├── components/      # Reusable pipeline components (e.g., ingestion, training, evaluation)
+│   ├── pipeline/        # Workflow orchestration and pipeline assembly
+│   ├── config/          # Configuration manager for handling config files
+│   ├── constants/       # Project-wide constants and settings
+│   ├── entity/          # Entity classes for structured data exchange between components
+│   └── utils/           # Utility functions, logging setup, common helpers
+├── templates/           # HTML templates (if using FastAPI with frontend)
+├── dvc.yaml             # DVC pipeline definition file for tracking data and model stages
+├── main.py              # Project entry point (e.g., FastAPI application)
+├── params.yaml          # Parameter file for model and pipeline tuning
+├── pyproject.toml       # Project metadata, build system, and dependency management
+├── requirements.txt     # Python package dependencies
+├── setup.py             # Packaging configuration for installing as a module
+└── uv.lock              # Locked dependency versions (if using uv or pip-tools)
+
 ```
+
+## Project Workflow Checklist
+
+1. **Update Configuration Files**
+
+   * Update `config/config.yaml`
+   * (Optional) Update `config/secrets.yaml`
+   * Update `params.yaml`
+
+2. **Update Project Structure**
+
+   * Update the entity definitions in `src/waste_classifier/entity`
+   * Update the configuration manager in `src/waste_classifier/config/configuration.py`
+   * Update the components in `src/waste_classifier/components`
+   * Update the pipelines in `src/waste_classifier/pipeline`
+
+3. **Update Core Files**
+
+   * Update `main.py` to reflect changes
+   * Update `dvc.yaml` to track the modified pipelines and stages
+
+---
+
+### Optional Improvements:
+
+* Validate updates with `dvc repro`
+* Ensure all changes are version-controlled via Git
+* Test each pipeline stage independently after updates
+
+
 
 ## Technology Stack
 
