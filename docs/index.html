@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom TFLite Webcam Classifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Custom TFLite Webcam Classifier</h1>
+
+        <div class="mb-6">
+            <button id="webcamButton"
+                class="w-full bg-teal-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-teal-700 transition duration-300">
+                ENABLE WEBCAM
+            </button>
+        </div>
+
+        <div class="mb-6">
+            <label for="thresholdSlider" class="block text-sm font-medium text-gray-700 mb-2">Confidence Threshold:
+                <span id="thresholdValue" class="font-bold">70%</span></label>
+            <input type="range" id="thresholdSlider" min="50" max="100" value="70"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
+        </div>
+
+        <video id="webcam" autoplay playsinline class="w-full rounded-lg shadow-md mb-4"></video>
+        <p id="webcamPredictions" class="bg-teal-600 text-white p-4 rounded-lg text-center text-lg font-medium">
+            Prediction will appear here...</p>
+    </div>
+
+    <script type="module">
+        import { ImageClassifier, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2";
+
+        const video = document.getElementById("webcam");
+        const webcamPredictions = document.getElementById("webcamPredictions");
+        const enableWebcamButton = document.getElementById("webcamButton");
+        const thresholdSlider = document.getElementById("thresholdSlider");
+        const thresholdValue = document.getElementById("thresholdValue");
+
+        let imageClassifier;
+        let webcamRunning = false;
+        let runningMode = "VIDEO";
+        let threshold = 0.7; // Default threshold: 70%
+
+        // Update threshold in real time
+        thresholdSlider.addEventListener("input", () => {
+            threshold = parseInt(thresholdSlider.value) / 100;
+            thresholdValue.innerText = `${thresholdSlider.value}%`;
+        });
+
+        const createImageClassifier = async () => {
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm");
+            imageClassifier = await ImageClassifier.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: "https://abhimanyus1997.github.io/waste-classifier-robot/docs/model_int8.tflite"
+                },
+                maxResults: 1,
+                runningMode: runningMode
+            });
+            console.log("Model loaded.");
+        };
+
+        createImageClassifier();
+
+        async function predictWebcam() {
+            if (!imageClassifier) return;
+
+            const startTimeMs = performance.now();
+            const classificationResult = await imageClassifier.classifyForVideo(video, startTimeMs);
+            const classifications = classificationResult.classifications;
+
+            const category = classifications[0].categories[0];
+            const confidence = category.score;
+
+            if (confidence >= threshold) {
+                webcamPredictions.innerText = `Classification: ${category.categoryName}\nConfidence: ${Math.round(confidence * 100)}%`;
+            } else {
+                webcamPredictions.innerText = `No confident prediction (Threshold: ${Math.round(threshold * 100)}%)`;
+            }
+
+            if (webcamRunning) {
+                window.requestAnimationFrame(predictWebcam);
+            }
+        }
+
+        async function enableCam() {
+            if (!imageClassifier) return;
+
+            if (webcamRunning) {
+                webcamRunning = false;
+                enableWebcamButton.innerText = "ENABLE WEBCAM";
+                enableWebcamButton.classList.remove("bg-red-600", "hover:bg-red-700");
+                enableWebcamButton.classList.add("bg-teal-600", "hover:bg-teal-700");
+            } else {
+                webcamRunning = true;
+                enableWebcamButton.innerText = "DISABLE WEBCAM";
+                enableWebcamButton.classList.remove("bg-teal-600", "hover:bg-teal-700");
+                enableWebcamButton.classList.add("bg-red-600", "hover:bg-red-700");
+
+                const constraints = { video: true };
+                video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
+                video.addEventListener("loadeddata", predictWebcam);
+            }
+        }
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            enableWebcamButton.addEventListener("click", enableCam);
+        } else {
+            console.warn("getUserMedia() is not supported by your browser");
+        }
+    </script>
+</body>
+
+</html>
